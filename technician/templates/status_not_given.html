@@ -1,0 +1,93 @@
+{% extends "ithome.html" %}
+{% block content %}
+<style>
+    .container{
+        margin-top:80px;
+    }
+</style>
+<div class="container">
+  </br>
+       {% if messages %}
+ {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+  </div>
+  {% endfor %}
+{% endif %}  
+  <form method="POST" action="{% url 'status-not-given' %}">
+    {% csrf_token %}
+    <fieldset class="form-group">
+        <input class="form-control" type="text" placeholder="Enter id number(Ex:R141398)" name="search">
+    </fieldset>
+  </form>
+  <h3 style="color:red">All Problems</h3>        
+  <table class="table table-hover" style="color:black">
+    <thead>
+      <tr>
+        <th>Problem Id</th>
+        <th>Id Number</th>
+        <th>Problem</th>
+        <th>Branch</th>
+        <th>Class Room</th>
+        <th>Date Posted</th>
+        <th>Slot</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if not idnumber %}
+         {% for prob in not_given %}
+                {% if prob.slot and prob.status != "success" and prob.status != "reject" %}
+                  <tr>
+                    <td>{{ prob.id }}</td>
+                    <td>{{ prob.stu }}</td>
+                    <td>{{ prob.problem }}</td>
+                    <td>{{ prob.branch }}</td>
+                    <td>{{ prob.class_room }}</td>
+                    <td>{{ prob.date_posted|date:"F d, Y" }}</td>
+                    <td>{{ prob.slot }}</td>
+                    <td>{{ prob.status }}</td>
+                    <td><a class="btn btn-primary" href="{% url 'give-status' prob.id %}">Success</a></td>
+                   <td><a class="btn btn-danger" href="{% url 'reject-status' prob.id %}">Reject</a></td>
+                  </tr> 
+                {% endif %}         
+         {% endfor %}
+     {% else %}
+        {% for prob in not_given %}
+                {% if prob.stu.id_no == idnumber %}
+                    {% if prob.slot and prob.status != "success" %}
+                      <tr>
+                        <td>{{ prob.id }}</td>
+                        <td>{{ prob.stu }}</td>
+                        <td>{{ prob.problem }}</td>
+                        <td>{{ prob.branch }}</td>
+                        <td>{{ prob.class_room }}</td>
+                        <td>{{ prob.date_posted|date:"F d, Y" }}</td>
+                        <td>{{ prob.slot }}</td>
+                        <td>{{ prob.status }}</td>
+                       <td><a class="btn btn-primary" href="{% url 'give-status' prob.id %}">Success</a></td> 
+                       <td><a class="btn btn-danger" href="{% url 'reject-status' prob.id %}">Reject</a></td>
+                      </tr>  
+                    {% endif %} 
+                {% endif %}             
+         {% endfor %}
+     {% endif %}    
+    </tbody>
+  </table>
+  <ul class="pagination">
+    {% if not_given.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ not_given.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    {% for num in not_given.paginator.page_range %}
+        {% if not_given.number == num %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% elif num > not_given.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+    {% if not_given.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ not_given.next_page_number }}">Next</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock content %}

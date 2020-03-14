@@ -1,0 +1,29 @@
+{% extends "ithome.html" %}
+{% block content %}
+<style>
+    .container{
+        margin-top:100px;
+    }
+</style>
+<div class="container">
+  <h2 style="color:red">Technician Status</h2>         
+  <table class="table table-hover" style="color:black">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Problems completed</th>
+      </tr>
+    </thead>
+    <tbody>
+     {% for prob in tech1 %}
+              <tr>
+                <td>{{ prob.username }}</td>
+                <td>{{ prob.name }}</td>
+                <td>{{ prob.problems_count }}</td>
+              </tr> 
+     {% endfor %} 
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

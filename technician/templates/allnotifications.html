@@ -1,0 +1,45 @@
+{% extends "ithome.html" %}
+{% block content %}
+<style>
+.container{
+    margin-top:100px;
+}
+</style>
+    <div class="container">
+        <h3 style="color:red">All Notifications</h3> 
+        </br>
+        <table class="table table-hover" style="color:black">
+        <thead>
+      <tr>
+        <th>Id</th>
+        <th>Notification</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for n in note %}
+            {% if n.tech.username == request.session.username %}
+              <tr>
+              <td>{{n.id}}</td>
+              <td> Mr. {{ n.tech.name }} {{ n.notify }}</td>
+              </tr>
+            {% endif %}  
+        {% endfor %}
+     </tbody>
+  </table>
+  <ul class="pagination">
+    {% if note.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ note.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    {% for num in note.paginator.page_range %}
+        {% if note.number == num %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% elif num > note.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+    {% if note.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ note.next_page_number }}">Next</a></li>
+    {% endif %}
+  </ul>       
+    </div>    
+{% endblock content %}

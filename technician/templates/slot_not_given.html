@@ -1,0 +1,58 @@
+{% extends "ithome.html" %}
+{% block content %}
+<style>
+    .container{
+        margin-top:80px;
+    }
+</style>
+<div class="container">
+  <h3 style="color:red">All Problems</h3>         
+  <table class="table table-hover" style="color:black">
+    <thead>
+      <tr>
+        <th>Problem Id</th>
+        <th>Id Number</th>
+        <th>Problem</th>
+        <th>Description</th>
+        <th>Branch</th>
+        <th>Class Room</th>
+        <th>Date Posted</th>
+        <th>Staus</th>
+      </tr>
+    </thead>
+    <tbody>
+     {% for prob in not_given %}
+            {% if not prob.slot and prob.status == "pending" %}
+              <tr>
+                <td>{{ prob.id }}</td>
+                <td>{{ prob.stu }}</td>
+                <td>{{ prob.problem }}</td>
+                <td>{{ prob.description }}</td>
+                <td>{{ prob.branch }}</td>
+                <td>{{ prob.class_room }}</td>
+                <td>{{ prob.date_posted|date:"F d, Y" }}</td>
+                <td>{{ prob.status }}</td>
+               <td><a class="btn btn-secondary" href="{% url 'add-slot-not-given' prob.id %}">Add</a></td>
+               <td><a class="btn btn-danger" href="{% url 'reject-status' prob.id %}">Reject</a></td>
+              </tr>
+            {% endif %}  
+     {% endfor %} 
+    </tbody>
+  </table>
+  <ul class="pagination">
+    {% if not_given.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ not_given.previous_page_number }}">Previous</a></li>
+    {% endif %}
+    {% for num in not_given.paginator.page_range %}
+        {% if not_given.number == num %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% elif num > not_given.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+    {% if not_given.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ not_given.next_page_number }}">Next</a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock content %}
